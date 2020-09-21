@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+            <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+        <title>Coreboot Part 1</title>
+
+        <!-- Bootstrap Core CSS -->
+        <link href="/theme/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom CSS -->
+        <link href="/theme/css/clean-blog.min.css" rel="stylesheet">
+
+        <!-- Code highlight color scheme -->
+            <link href="/theme/css/code_blocks/monokai.css" rel="stylesheet">
+
+
+        <!-- Custom Fonts -->
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+
+
+        <meta name="description" content="Compiling Coreboot 4.11 for Minnowmax with payload seabios or Tianocore">
+
+        <meta name="author" content="Z.Rahimkhani">
+
+        <meta name="tags" content="blog">
+        <meta name="tags" content="firmware">
+        <meta name="tags" content="coreboot">
+        <meta name="tags" content="intel">
+
+	                <meta property="og:locale" content="">
+		<meta property="og:site_name" content="My Persoanl Adventures">
+
+	<meta property="og:type" content="article">
+            <meta property="article:author" content="/author/zrahimkhani.html">
+	<meta property="og:url" content="/coreboot-part-1.html">
+	<meta property="og:title" content="Coreboot Part 1">
+	<meta property="article:published_time" content="2020-01-09 06:15:00+03:30">
+            <meta property="og:description" content="Compiling Coreboot 4.11 for Minnowmax with payload seabios or Tianocore">
+
+            <meta property="og:image" content="/theme/images/post-bg.jpg">
+</head>
+
+<body class="article-coreboot-part-1">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">My Persoanl Adventures</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Header -->
+        <header class="intro-header" style="background-image: url('/theme/images/post-bg.jpg')">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="post-heading">
+                        <h1>Coreboot Part 1</h1>
+                        <span class="meta">Posted by
+                                <a href="/author/zrahimkhani.html">Z.Rahimkhani</a>
+                             on Thu 09 January 2020
+                        </span>
+                            <span class="meta">Updated on Thu 09 January 2020</span>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+    <!-- Post Content -->
+    <article>
+        <blockquote>
+<p>Coreboot is an open source firmware project. It is focused on x86 processors but other processors, like Alpha, PPC, and ARM-based systems are supported. Coreboot is designed to do critical hardware initialization before passing control to a payload.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4842-0070-4">Embedded Firmware solutions</a></p>
+</blockquote>
+<p>How to Compile Coreboot for MinnowMax on ubuntu?
+Here's a snippet which I use to compile Coreboot on Ubuntu 18.04.</p>
+<p>First, we need the following files:</p>
+<ol>
+<li><a href="https://software.intel.com/sites/default/files/managed/e5/fb/minnowboard-max-rel-1-01-firmware-images.zip">Intel UEFI‌ firmware</a> for creating necessary binary files </li>
+</ol>
+<p>Intel Management Engine (ME)or(TXE)
+<a href="https://doc.coreboot.org/ifdtool/layout.html">Intel Flash descriptor (IFD)</a>
+Intel Gigabit Engine (GBE)
+using <code>ifdtool</code> included in the Coreboot source tree.</p>
+<ol>
+<li>
+<p>FSP package file which is needed to extract <a href="https://github.com/coreboot/fsp/raw/BayTrail/BayTrailFspBinPkg/Vbios/Vga.dat">VGA.dat</a> and <a href="https://github.com/coreboot/fsp/raw/BayTrail/BayTrailFspBinPkg/FspBin/BayTrailFSP.fd">BayTrailFSP.fd</a></p>
+</li>
+<li>
+<p>Microcode for E3800 CPUs  </p>
+</li>
+</ol>
+<p>we Downloaded these files and got in suitable path like this Makefile.</p>
+<div class="highlight"><pre><span></span><span class="c1"># Coreboot Varibales</span>
+<span class="nv">COREBOOT_DIR</span><span class="o">=</span>coreboot_minnowmax
+<span class="nv">COREBOOT_REPO</span><span class="o">=</span>http://review.coreboot.org/coreboot.git
+<span class="nv">COREBOOT_COMMIT</span><span class="o">=</span><span class="m">4</span>.11_branch
+<span class="nv">COREBOOT_MICROCODES</span><span class="o">=</span>microcode/M023067221D.h microcode/M0130673321.h microcode/M0130679901.h
+
+<span class="c1">#</span>
+<span class="c1">#FSP_BINARY_URL=https://github.com/coreboot/fsp/raw/BayTrail/BayTrailFspBinPkg/FspBin/BayTrailFSP.fd</span>
+<span class="c1">#VGA_BIOS_URL=https://github.com/coreboot/fsp/raw/BayTrail/BayTrailFspBinPkg/Vbios/Vga.dat</span>
+
+<span class="c1"># Optional UEFI ROM File</span>
+<span class="c1">#UEFI_ROM_URL=https://software.intel.com/sites/default/files/managed/e5/fb/minnowboard-max-rel-1-01-firmware-images.zip</span>
+<span class="nv">UEFI_ROM_FILE</span><span class="o">=</span>MNW2MAX1.X64.0101.R01.1908091048.bin
+
+<span class="c1">#</span>
+<span class="c1">#BOOT_ORDER=bootorder</span>
+
+<span class="c1"># Dependencies</span>
+<span class="nv">DEPENDS</span><span class="o">=</span>git m4 bison flex g++ wget unzip tar zlib1g-dev
+
+<span class="c1"># Configurations</span>
+define GENERAL_CONFIG
+<span class="nv">CONFIG_VENDOR_INTEL</span><span class="o">=</span>y
+<span class="nv">CONFIG_VGA_BIOS</span><span class="o">=</span>y
+<span class="nv">CONFIG_VGA_BIOS_FILE</span><span class="o">=</span><span class="s2">&quot;vga.dat&quot;</span>
+<span class="nv">CONFIG_HAVE_IFD_BIN</span><span class="o">=</span>y
+<span class="nv">CONFIG_HAVE_ME_BIN</span><span class="o">=</span>y
+<span class="nv">CONFIG_FSP_FILE</span><span class="o">=</span><span class="s2">&quot;BayTrailFSPGold004.fd&quot;</span>
+<span class="nv">CONFIG_BOARD_INTEL_MINNOWMAX</span><span class="o">=</span>y
+<span class="nv">CONFIG_ENABLE_BUILTIN_COM1</span><span class="o">=</span>y
+<span class="nv">CONFIG_IFD_BIN_PATH</span><span class="o">=</span><span class="s2">&quot;flashregion_0_flashdescriptor.bin&quot;</span>
+<span class="nv">CONFIG_ME_BIN_PATH</span><span class="o">=</span><span class="s2">&quot;flashregion_2_intel_me.bin&quot;</span>
+<span class="nv">CONFIG_HAVE_FSP_BIN</span><span class="o">=</span>y
+<span class="nv">CONFIG_CONSOLE_POST</span><span class="o">=</span>y
+<span class="nv">CONFIG_CPU_MICROCODE_HEADER_FILES</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>COREBOOT_MICROCODES<span class="k">)</span><span class="s2">&quot;</span>
+<span class="nv">CONFIG_MAINBOARD_SMBIOS_PRODUCT_NAME</span><span class="o">=</span><span class="s2">&quot;E3800Firmware&quot;</span>
+<span class="nv">CONFIG_HAVE_GBE_BIN</span><span class="o">=</span>y
+<span class="nv">CONFIG_GBE_BIN_PATH</span><span class="o">=</span><span class="s2">&quot;flashregion_3_gbe.bin&quot;</span>
+<span class="c1"># CONFIG_PAYLOAD_UBOOT is not set</span>
+endef
+
+define SEABIOS_CONFIG
+<span class="c1">#CONFIG_SEABIOS_BOOTORDER_FILE=&quot;&quot;</span>
+<span class="nv">CONFIG_PAYLOAD_SEABIOS</span><span class="o">=</span>y
+endef
+
+define TIANOCORE_CONFIG
+<span class="nv">CONFIG_PAYLOAD_TIANOCORE</span><span class="o">=</span>y
+<span class="nv">CONFIG_PAYLOAD_FILE</span><span class="o">=</span><span class="s2">&quot;payloads/external/tianocore/tianocore/Build/UEFIPAYLOAD.fd&quot;</span>
+endef
+
+<span class="nb">export</span> GENERAL_CONFIG
+<span class="nb">export</span> SEABIOS_CONFIG
+<span class="nb">export</span> TIANOCORE_CONFIG
+
+.PHONY: all depends checkout toolchain ifdtool extract binaries config seabios-config tianocore-config menuconfig build
+all: depends checkout toolchain ifdtool extract binaries seabios-config menuconfig build
+seabios: all
+tianocore: depends checkout toolchain ifdtool extract binaries tianocore-config menuconfig build
+
+depends:
+    sudo apt install -y <span class="k">$(</span>DEPENDS<span class="k">)</span>
+
+<span class="k">$(</span>COREBOOT_DIR<span class="k">)</span>:
+    git clone <span class="k">$(</span>COREBOOT_REPO<span class="k">)</span> <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span>
+
+checkout: <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span>
+    git -C <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span> checkout <span class="k">$(</span>COREBOOT_COMMIT<span class="k">)</span>
+
+toolchain: depends
+    make -C <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span> crossgcc-i386
+
+ifdtool: <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span>/util/ifdtool/ifdtool
+
+<span class="k">$(</span>COREBOOT_DIR<span class="k">)</span>/util/ifdtool/ifdtool: 
+    make -C <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span>/util/ifdtool clean all
+
+binaries:
+    <span class="c1">#wget -cNO $(COREBOOT_DIR)/fsp.dat $(FSP_BINARY_URL)</span>
+    <span class="c1">#wget -cNO $(COREBOOT_DIR)/vga.dat $(VGA_BIOS_URL)</span>
+    <span class="c1">#wget -cNO rom.zip $(UEFI_ROM_URL)</span>
+    <span class="c1">#unzip -od rom rom.zip</span>
+    <span class="c1">#find rom -name $(UEFI_ROM_FILE) | xargs -I {} cp {} $(COREBOOT_DIR)/</span>
+    <span class="c1">#rm -rf rom</span>
+
+extract:
+    <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span>/util/ifdtool/ifdtool -x <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span>/<span class="k">$(</span>UEFI_ROM_FILE<span class="k">)</span>
+    mv *.bin <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span>
+
+config:
+    <span class="nb">echo</span> <span class="s2">&quot;</span><span class="nv">$$</span><span class="s2">{GENERAL_CONFIG}&quot;</span> &gt; <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span>/.config
+
+seabios-config: config
+    <span class="nb">echo</span> <span class="s2">&quot;</span><span class="nv">$$</span><span class="s2">{SEABIOS_CONFIG}&quot;</span> &gt;&gt; <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span>/.config
+
+tianocore-config: config
+    <span class="nb">echo</span> <span class="s2">&quot;</span><span class="nv">$$</span><span class="s2">{TIANOCORE_CONFIG}&quot;</span> &gt;&gt; <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span>/.config
+
+menuconfig:
+    make -C <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span> menuconfig 
+
+microcodes:
+    <span class="c1">#TODO: </span>
+
+build:
+    make -C <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span> clean
+    make -C <span class="k">$(</span>COREBOOT_DIR<span class="k">)</span> all
+
+clean:
+    <span class="c1"># TODO: </span>
+</pre></div>
+
+
+<p>we can compile this makefile with this commands </p>
+<div class="highlight"><pre><span></span>make 
+
+<span class="c1"># with payload seabios </span>
+make seabios-config 
+
+<span class="c1">#with payload tianocore </span>
+
+make tianocore-config
+</pre></div>
+    </article>
+
+        <div class="tags">
+            <p>tags: <a href="/tag/blog.html">blog</a>, <a href="/tag/firmware.html">firmware</a>, <a href="/tag/coreboot.html">coreboot</a>, <a href="/tag/intel.html">intel</a></p>
+        </div>
+
+    <hr>
+
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <ul class="list-inline text-center">
+                            <li>
+                                <a href="#">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fa fa-circle fa-stack-2x"></i>
+                                        <i class="fa fa-you can add links in your config file fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fa fa-circle fa-stack-2x"></i>
+                                        <i class="fa fa-another social link fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                    </ul>
+<p class="copyright text-muted">
+    Blog powered by <a href="http://getpelican.com">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>. <br />        &copy;  Z.Rahimkhani
+</p>                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="/theme/js/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/theme/js/bootstrap.min.js"></script>
+
+        <!-- Custom Theme JavaScript -->
+        <script src="/theme/js/clean-blog.min.js"></script>
+
+</body>
+
+</html>
